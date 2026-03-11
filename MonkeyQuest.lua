@@ -50,14 +50,12 @@ function self:UPDATE_MOUSEOVER_UNIT()
 end
 
 function MonkeyQuest_OnUpdate()
-	if MQ_UpdateTicker < GetTime() then -- Triggers once per second
-		MQ_UpdateTicker = GetTime() + 1
-		if MQ_NeedRefresh then MonkeyQuest_Refresh() end
-	end
+	if MQ_NeedRefresh and MQ_UpdateTicker < GetTime() then MonkeyQuest_Refresh() MQ_NeedRefresh = false end
 end
 function MonkeyQuest_OnMouseDown(arg1)
-	if arg1 == "LeftButton" and MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bLocked == false then MonkeyQuestFrame:StartMoving() end
-	if arg1 == "RightButton"then
+	if arg1 == "LeftButton" then
+		if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bLocked == false then MonkeyQuestFrame:StartMoving() end
+	else
 		if IsShiftKeyDown() then
 			if MonkeySpeedConfig[MonkeySpeed.m_strPlayer].m_bDisplay then
 				MonkeySpeedConfig[MonkeySpeed.m_strPlayer].m_bDisplay = false
@@ -335,7 +333,6 @@ function MonkeyQuest_Refresh() -- Refresh .3 seconds after 'QUEST_LOG_UPDATE'
 	end
 	SelectQuestLogEntry(tmpQuestLogSelection)
 	MonkeyQuest_Resize()
-	MQ_NeedRefresh = false
 	MonkeyQuest.m_fTimeSinceRefresh = 0.0
 end
 function MonkeyQuest_RefreshQuestItemList()
@@ -550,16 +547,28 @@ function MonkeyQuestButton_OnClick(button) -- TODO: Add Click showing quests on 
 			not MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_aQuestList[getglobal("MonkeyQuestHideButton"..this.id).m_strQuestLogTitleText].m_bChecked
 		MonkeyQuestFrame:Show()
 		MonkeyQuest_Refresh()
-	elseif IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then -- Shift-Left -- TODO: Add pfQuest/Questie support
+	elseif IsShiftKeyDown() and (ChatFrameEditBox:IsVisible() or IsAddOnLoaded("GroupFinder") and GF_LFGDescriptionEditBoxHasFocus[1]) then -- Shift-Left -- TODO: Add pfQuest/Questie support
 		if button == "LeftButton" then
 			if IsAddOnLoaded("pfQuest") then
 				local data = pfDatabase:GetIDByName(strQuestLogTitleText,"quests")
 				for id,_ in data do
-					if pfDB["quests"]["data"][id].lvl == strQuestLevel then pfQuestCompat.InsertQuestLink(id, strQuestLogTitleText) return end
+					if pfDB["quests"]["data"][id].lvl == strQuestLevel then
+						if IsAddOnLoaded("GroupFinder") and GF_LFGDescriptionEditBoxHasFocus[1] then
+							GF_LFGDescriptionEditBox:Insert(GF_GetDifficultyColor(strQuestLevel).."|Hquest:"..id..":"..strQuestLevel.."|h["..strQuestLogTitleText.."]|h|r") return
+						else
+							pfQuestCompat.InsertQuestLink(id, strQuestLogTitleText) return
+						end
+					end
 				end
 			elseif IsAddOnLoaded("GroupFinder") then
 				local data = GF_WORD_QUEST[table.concat(GetModifiedQuestName(strQuestLogTitleText))]
-				if data then ChatFrameEditBox:Insert(GF_GetDifficultyColor(strQuestLevel).."|Hquest:"..data[1]..":"..data[2].."|h["..strQuestLogTitleText.."]|h|r") return end
+				if data then
+					if GF_LFGDescriptionEditBoxHasFocus[1] then
+						GF_LFGDescriptionEditBox:Insert(GF_GetDifficultyColor(strQuestLevel).."|Hquest:"..data[1]..":"..data[2].."|h["..strQuestLogTitleText.."]|h|r") return
+					else
+						ChatFrameEditBox:Insert(GF_GetDifficultyColor(strQuestLevel).."|Hquest:"..data[1]..":"..data[2].."|h["..strQuestLogTitleText.."]|h|r") return
+					end
+				end
 			end
 			ChatFrameEditBox:Insert("|cffffff00|Hquest:0:"..strQuestLevel.."|h["..strQuestLogTitleText.."]|h|r")
 		else
@@ -666,8 +675,6 @@ function MonkeyQuestButton_OnEnter()
 	end
 	GameTooltip:Show()
 end
-function MonkeyQuestHideButton_OnLoad()
-end
 function MonkeyQuestHideButton_OnEnter()
 	if not MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bShowNoobTips == false then return end
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_strAnchor == "DEFAULT" then
@@ -689,11 +696,4 @@ function MonkeyQuestHideButton_OnClick()
 	end
 	MonkeyQuestFrame:Show()
 	MonkeyQuest_Refresh()
-end
-function MonkeyQuest_PrintPoints()
-	if DEFAULT_CHAT_FRAME then
-		DEFAULT_CHAT_FRAME:AddMessage("Left: "..MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_iFrameLeft)
-		DEFAULT_CHAT_FRAME:AddMessage("Top: "..MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_iFrameTop)
-		DEFAULT_CHAT_FRAME:AddMessage("Bottom: "..MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_iFrameBottom)
-	end
 end

@@ -17,7 +17,7 @@ function MonkeyQuestInit_LoadConfig()
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bNoBorder == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bNoBorder = true end
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bGrowUp == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bGrowUp = false end
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bShowNumQuests == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bShowNumQuests = true end
-	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bLocked == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bLocked = true end
+	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bLocked == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bLocked = false end
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bHideCompletedQuests == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bHideCompletedQuests = false end
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bHideCompletedObjectives == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bHideCompletedObjectives = false end
 	if MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bAllowRightClick == nil then MonkeyQuestConfig[MonkeyQuest.m_strPlayer].m_bAllowRightClick = true end
