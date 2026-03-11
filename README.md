@@ -3,4 +3,4 @@ This is a modified version of the MonkeyQuest addon. I combined MonkeyLibrary, M
 
 I also heavily rewrote the MonkeySpeed addon. Added partial Turtle WoW support(I'll add more later) and changed its detection algorithmn so it shouldn't mess up as much(or ever?). Can now be toggled by shift-right clicking the MonkeyQuest title frame.  
 
-PS: For pfQuest integration, left-click to show quest objectives. Right-click to hide quest objectives. Shift-left click to block opening the world map when showing quest objectives. Enables quest links when posting to chat.  
+PS: For pfQuest integration, left-click to show quest objectives. Right-click to hide quest objectives. Shift-left click to block opening the world map when showing quest objectives. Also creates proper quest links when posting in chat.  
