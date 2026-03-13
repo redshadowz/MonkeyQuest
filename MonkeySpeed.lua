@@ -28,13 +28,18 @@ function MonkeySpeed_OnLoad()
 	MonkeySpeedFrame:SetBackdropBorderColor(1.0, 0.6901960784313725, 0.0, 1.0)
 end
 function self:PLAYER_ENTERING_WORLD()
-	MonkeySpeed.m_bLoaded = true
-	MS_LastPosX,MS_LastPosY = GetPlayerMapPosition("player")
-	MonkeySpeed_Init()
-	this:UnregisterEvent('PLAYER_ENTERING_WORLD')
-	self:SetScript('OnUpdate', function() MonkeySpeed_OnUpdate() end)
-	for _,event in {'ZONE_CHANGED','ZONE_CHANGED_INDOORS','ZONE_CHANGED_NEW_AREA', } do self:RegisterEvent(event) end
-	MS_LoadZones(GetMapZones(GetCurrentMapContinent()))
+	if not MonkeySpeed.m_bLoaded then
+		MonkeySpeed.m_bLoaded = true
+		MS_LastPosX,MS_LastPosY = GetPlayerMapPosition("player")
+		MonkeySpeed_Init()
+		self:SetScript('OnUpdate', function() MonkeySpeed_OnUpdate() end)
+		for _,event in {'ZONE_CHANGED','ZONE_CHANGED_INDOORS','ZONE_CHANGED_NEW_AREA', } do self:RegisterEvent(event) end
+		MS_LoadZones(GetMapZones(GetCurrentMapContinent()))
+		local old_WorldMapFrame = WorldMapFrame:GetScript("OnHide")
+		WorldMapFrame:SetScript("OnHide", function() SetMapToCurrentZone() old_WorldMapFrame() end)
+	else
+		MS_LoadZones(GetMapZones(GetCurrentMapContinent()))
+	end
 end
 function self:ZONE_CHANGED()
 	MS_LoadZones(GetMapZones(GetCurrentMapContinent()))
