@@ -28,7 +28,6 @@ end
 function self:PLAYER_ENTERING_WORLD()
 	MonkeyQuest.m_bLoaded = true
 	MonkeyQuestInit_LoadConfig()
-	MonkeyQuestInit_CleanQuestList()
 	this:UnregisterEvent('PLAYER_ENTERING_WORLD')
 	for _,event in {'QUEST_LOG_UPDATE','PLAYER_LEVEL_UP','ZONE_CHANGED','ZONE_CHANGED_INDOORS','ZONE_CHANGED_NEW_AREA','UPDATE_MOUSEOVER_UNIT', } do self:RegisterEvent(event) end
 	self:SetScript('OnUpdate', function() MonkeyQuest_OnUpdate() end)
@@ -625,7 +624,7 @@ function MonkeyQuestButton_OnClick(button) -- TODO: Add Click showing quests on 
 				local questids = pfDatabase:GetQuestIDs(questIndex)
 				local title = pfQuestCompat.GetQuestLogTitle(questIndex)
 				local id = questids and tonumber(questids[1])
-				if id then
+				if id and not IsShiftKeyDown() then
 					local maps, meta = {}, { ["addon"] = "PFQUEST", ["qlogid"] = questIndex }
 					maps = pfDatabase:SearchQuestID(id, meta, maps)
 					pfMap:ShowMapID(pfDatabase:GetBestMap(maps))
